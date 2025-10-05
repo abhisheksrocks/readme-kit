@@ -1,0 +1,217 @@
+openapi: 3.1.0
+info:
+  title: Basic Health Check Server API
+  description: |
+    Simple HTTP server providing a health check endpoint for monitoring and liveness probes.
+
+    This API provides a `/status` endpoint that returns the operational status of the service.
+    The endpoint is designed for use with container orchestration platforms (Docker, Kubernetes)
+    and monitoring tools to verify that the service is running and responsive.
+
+    **Key Features:**
+    - Liveness check only (no readiness or dependency checks)
+    - Fixed port 3000
+    - No authentication required
+    - No rate limiting
+    - No request logging for /status endpoint
+  version: 1.0.0
+  contact:
+    name: API Support
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+  - url: http://0.0.0.0:3000
+    description: Docker container server
+
+paths:
+  /status:
+    get:
+      summary: Get service health status
+      description: |
+        Returns the current health status of the service. This endpoint implements
+        a liveness check that indicates whether the service is running and responsive.
+
+        **Behavior:**
+        - Always returns 200 OK when service is operational
+        - Returns JSON object with status field set to "ok"
+        - Ignores all query parameters and headers
+        - No side effects (no logging, no state changes)
+        - No authentication required
+
+        **Use Cases:**
+        - Kubernetes liveness probes
+        - Docker health checks
+        - Load balancer health monitoring
+        - Uptime monitoring services
+
+      operationId: getHealthStatus
+      tags:
+        - Health
+
+      parameters: []
+
+      responses:
+        '200':
+          description: |
+            Service is operational and healthy.
+            Returns a JSON object containing the health status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatusResponse'
+              examples:
+                success:
+                  summary: Successful health check
+                  value:
+                    status: "ok"
+
+        '405':
+          description: |
+            Method Not Allowed.
+            The /status endpoint only accepts GET requests. All other HTTP methods
+            (POST, PUT, DELETE, PATCH, HEAD, OPTIONS) return this error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                methodNotAllowed:
+                  summary: Non-GET request attempted
+                  value:
+                    statusCode: 405
+                    error: "Method Not Allowed"
+                    message: "GET method required for /status endpoint"
+
+        '500':
+          description: |
+            Internal Server Error.
+            Unexpected server error occurred while processing the health check.
+            This should be rare as the endpoint has no external dependencies.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                internalError:
+                  summary: Server error
+                  value:
+                    statusCode: 500
+                    error: "Internal Server Error"
+                    message: "An unexpected error occurred"
+
+    post:
+      summary: Method not allowed
+      description: POST requests to /status are not supported
+      operationId: postHealthStatusNotAllowed
+      tags:
+        - Health
+      responses:
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Method not allowed
+      description: PUT requests to /status are not supported
+      operationId: putHealthStatusNotAllowed
+      tags:
+        - Health
+      responses:
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Method not allowed
+      description: DELETE requests to /status are not supported
+      operationId: deleteHealthStatusNotAllowed
+      tags:
+        - Health
+      responses:
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    patch:
+      summary: Method not allowed
+      description: PATCH requests to /status are not supported
+      operationId: patchHealthStatusNotAllowed
+      tags:
+        - Health
+      responses:
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    HealthStatusResponse:
+      type: object
+      description: |
+        Health status response object.
+        Contains a single field indicating the service operational status.
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          const: "ok"
+          description: |
+            Health status indicator. Always returns "ok" when the service is operational.
+            This is a liveness check only and does not validate external dependencies.
+          example: "ok"
+      additionalProperties: false
+      examples:
+        - status: "ok"
+
+    ErrorResponse:
+      type: object
+      description: |
+        Standard error response format.
+        Used for all error conditions (4xx, 5xx status codes).
+      required:
+        - statusCode
+        - error
+        - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 405
+        error:
+          type: string
+          description: Error type/category
+          example: "Method Not Allowed"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "GET method required for /status endpoint"
+      additionalProperties: false
+
+tags:
+  - name: Health
+    description: |
+      Health check and monitoring endpoints.
+
+      These endpoints provide service health information for monitoring tools,
+      container orchestration platforms, and load balancers.
+
+externalDocs:
+  description: Feature Specification
+  url: ../spec.md

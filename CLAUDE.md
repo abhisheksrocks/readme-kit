@@ -4,6 +4,8 @@ Auto-generated from all feature plans. Last updated: 2025-10-05
 
 ## Active Technologies
 - Node.js 20.0.0+ LTS, TypeScript 5.5.0+ + Fastify 5.6.1 (web framework), Vitest 3.2+ (testing) (001-create-basic-server)
+- TypeScript 5.5.4, Node.js ≥20.0.0 LTS + Fastify 5.6.1 (web framework), Vitest 3.2+ (testing), tsx 4.19.2 (dev runtime) (002-fix-typescript-configuration)
+- N/A (configuration fix only) (002-fix-typescript-configuration)
 
 ## Project Structure
 ```
@@ -19,6 +21,7 @@ npm test [ONLY COMMANDS FOR ACTIVE TECHNOLOGIES][ONLY COMMANDS FOR ACTIVE TECHNO
 Node.js 20.0.0+ LTS, TypeScript 5.5.0+: Follow standard conventions
 
 ## Recent Changes
+- 002-fix-typescript-configuration: Added TypeScript 5.5.4, Node.js ≥20.0.0 LTS + Fastify 5.6.1 (web framework), Vitest 3.2+ (testing), tsx 4.19.2 (dev runtime)
 - 001-create-basic-server: Added Node.js 20.0.0+ LTS, TypeScript 5.5.0+ + Fastify 5.6.1 (web framework), Vitest 3.2+ (testing)
 
 <!-- MANUAL ADDITIONS START -->
